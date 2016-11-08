@@ -12,5 +12,14 @@
 */
 
 Route::get('/', function () {
+    # return redirect()->route('/foo/barbaz');
+    # return "hello world";
     return view('welcome');
+});
+
+Route::get('/test', 'TaskController@test');
+
+
+Route::get('/foo/{user}', function ($username) {
+    return $username;
 });
