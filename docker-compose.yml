@@ -1,11 +1,17 @@
 version: '2'
 services:
   mysql:
-    build: ./mysql
+    #build:
+    #  context: ./mysql
+    image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_ROOT_PASSWORD: 'mysql'
+      MYSQL_DATABASE: 'mydb'
+      MYSQL_USER: 'myuser'
+      MYSQL_PASSWORD: 'mypass'
     volumes:
       - db:/var/lib/mysql
+      - my.cnf:/etc/mysql/conf.d/my.cnf
   php:
     build: ./php
     command: httpd -d /etc/httpd/ -DFOREGROUND
@@ -16,6 +22,11 @@ services:
      - ./firstApp:/var/www/html
     depends_on:
       - mysql
+    environment:
+      - DB_HOST='localhost'
+      - DB_DATABASE='mydb'
+      - DB_USERNAME='myuser'
+      - DB_PASSWORD='mypass'
 volumes:
   db:
 
