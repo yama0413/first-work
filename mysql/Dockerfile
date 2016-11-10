@@ -6,8 +6,4 @@ ARG MYSQL_USER
 ARG MYSQL_PASSWORD
 
 COPY ./my.cnf /etc/mysql/conf.d
-ENV MYSQL_ROOT_PASSWORD='mysql'
-ENV MYSQL_DATABASE='mydb'
-ENV MYSQL_USER='myuser'
-ENV MYSQL_PASSWORD='mypass'
 
