@@ -13,10 +13,13 @@
 
 Route::get('/', function () {
     # return redirect()->route('/foo/barbaz');
-    # return "hello world";
-    # return view('welcome');
-    return env('DB_HOST', "<none>") . ",   " . env('DB_DATABASE', "<none>") . ",   " . env('DB_USERNAME', "<none>") . ",   " . env('DB_PASSWORD', "<none>");
+    return view('welcome');
 });
+
+Route::get('/info', function () {
+    return phpinfo();
+});
+
 
 Route::get('/test', 'TaskController@test');
 

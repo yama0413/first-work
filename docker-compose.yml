@@ -22,10 +22,12 @@ services:
     depends_on:
       - mysql
     environment:
-      - DB_HOST='localhost'
-      - DB_DATABASE='mydb'
-      - DB_USERNAME='myuser'
-      - DB_PASSWORD='mypass'
+      - DB_HOST=mysql
+      - DB_DATABASE=mydb
+      - DB_USERNAME=myuser
+      - DB_PASSWORD=mypass
+    links:
+      - mysql
 volumes:
   db:
 
