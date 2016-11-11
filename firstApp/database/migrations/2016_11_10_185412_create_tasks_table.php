@@ -18,12 +18,11 @@ class CreateTasksTable extends Migration
         {
             $table->increments('id');
             $table->string('title', 128 );
-            $table->string('message', 512);
+            $table->string('message');
             $table->integer('state');
-            $table->time('created');
-            $table->time('modified');
+            $table->time('deadline_date');
+            $table->time('done_date');
         });
-
     }
 
     /**

@@ -14,8 +14,18 @@
 Route::get('/', function () {
     # return redirect()->route('/foo/barbaz');
     # return view('welcome');
-	# return base_path('bower_compose/jquery');
-    return view('tasks');
+    # return base_path('bower_compose/jquery');
+    # return view('tasks');
+
+    $html = "";
+    $users = DB::table('mydb.tasks')->get();
+
+    #foreach($users as $user){
+    #    $html .= $user->message."<br />";
+    #}
+    #return $html;
+
+    return view('tasks', ['users' => $users]);
 });
 
 Route::get('/info', function () {
