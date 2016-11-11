@@ -13,7 +13,9 @@
 
 Route::get('/', function () {
     # return redirect()->route('/foo/barbaz');
-    return view('welcome');
+    # return view('welcome');
+	# return base_path('bower_compose/jquery');
+    return view('tasks');
 });
 
 Route::get('/info', function () {
