@@ -11,30 +11,17 @@
 |
 */
 
-Route::get('/', function () {
-    # return redirect()->route('/foo/barbaz');
-    # return view('welcome');
-    # return base_path('bower_compose/jquery');
-    # return view('tasks');
-
-    $html = "";
-    $users = DB::table('mydb.tasks')->get();
-
-    #foreach($users as $user){
-    #    $html .= $user->message."<br />";
-    #}
-    #return $html;
-
-    return view('tasks', ['users' => $users]);
-});
+Route::get('/', 'TaskController@index');
+Route::post('/new', 'TaskController@create');
+Route::post('/regist', 'TaskController@update');
+Route::post('/update', 'TaskController@update');
+Route::post('/updtask/{id}', 'TaskController@updtask');
 
 Route::get('/info', function () {
     return phpinfo();
 });
 
-
 Route::get('/test', 'TaskController@test');
-
 
 Route::get('/foo/{user}', function ($username) {
     return $username;

@@ -18,7 +18,7 @@ class TasksTableSeeder extends Seeder
                 'message' => "テスト用のメッセージです ".str_random(10),
                 'state' => rand(0,1),
                 'deadline_date' => new DateTime(),
-                'done_date' => NEW DateTime(),
+                'done_date' => new DateTime(),
             ]);
         }
     }
