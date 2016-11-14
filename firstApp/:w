@@ -22,68 +22,22 @@
                 $.ajax({
                     url: "/new",
                     type: "POST",
-                    data: {
-                        "taskname":$("#modal_taskname").val(),
-                        "message" :$("#modal_message").val()
-                    },
+                    data: { "taskname":$("#modal_taskname").val(),
+                            "message" :$("#modal_message").val()},
                     success:function(data){
                         alert("タスク登録が完了しました");
-                        $("#myModal").modal("hide")
-
-                        // NOTE: POST -> GET という処理なのでユーザー体験が損なわれるとWarningが出る。
-                        $.get("/", function(render){
-                            $("body").html(render);
-                        });
                     },
                     error:function(XMLHttpRequest, textStatus, errorThrown){
                         alert("Error:" + textStatus);
-                    },
-                    complete:function(){
-                        $("#modal_taskname").val("");
-                        $("#modal_message").val("");
-                    },
-                });
-            });
-
-            $(".checkbox").change(function(e){
-                console.log($('input', this).val());
-                var id = $('input',this).val().slice(6);
-
-                // TODO: ajax通信で達成・未達成情報を更新する
-            });
-
-            $(".btndel").click(function(e){
-                var id = e.target.id.slice(7)
-
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
                 });
-                $.ajax({
-                    url: "/remove/" + id,
-                    type: "POST",
-                    data: {},
-
-                    beforeSend:function(XMLHttpRequest){
-                        alert("foobar");
-                    },
-                    success:function(data){
-                        // NOTE: POST -> GET という処理なのでユーザー体験が損なわれるとWarningが出る。
-                        $.get("/", function(render){
-                            $("body").html(render);
-                        });
-                    },
-                    error:function(XMLHttpRequest, textStatus, errorThrown){
-                        alert("Error:" + textStatus);
-                    },
-                    complete:function(){
-                    },
-                });
             });
 
-
-
+            $(".textarea").change(function(e){
+                var objname = $(this).attr("id")
+                objname = objname.replace(/textarea/g, 'btnupd')
+                $("#"+objname).prop('disabled',false)
+            });
 
             $(".checkbox").click(function(){
                 $("#msg").text("checkbox touched")
@@ -107,19 +61,19 @@
             </div>
         </nav>
 
-        <div id="todo_container" class="container">
+        <div class="container">
             <h4>TODOリスト一覧</h4>
             @foreach($users as $user)
             <form action="/updtask/{{$user->id}}" method="post">
                 <div class="panel panel-success">
                     <div class="panel-heading">
                         @if($user->state === 1)
-                        <div class="checkbox"><label><input name="state" type="checkbox" value="check_{{$user->id}}" checked=checked>達成</label></div>
+                        <div id="check_{{$user->id}}" class="checkbox"><label><input name="state" type="checkbox" value="checked" checked=checked>達成</label></div>
                         @else
-                        <div class="checkbox"><label><input name="state" type="checkbox" value="check_{{$user->id}}">達成</label></div>
+                        <div id="check_{{$user->id}}" class="checkbox"><label><input name="state" type="checkbox" value="checked">達成</label></div>
                         @endif
-                        <button id="btnupd_{{$user->id}}" name="update" type="button" class="btn btnupd btn-default navbar-btn">更新</button>
-                        <button id="btndel_{{$user->id}}" name="delete" type="button" class="btn btndel btn-default navbar-btn">削除</button>
+                        <input value="更新" id="btnupd_{{$user->id}}" name="update" type="submit" class="btn btnupd btn-default navbar-btn">
+                        <input value="削除" id="btndel_{{$user->id}}" name="delete" type="submit" class="btn btn-default navbar-btn">
                         {{ $user->title }}
                     </div>
                     <div class="panel-body">
