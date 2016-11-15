@@ -16,6 +16,7 @@ Route::post('/', 'TaskController@index');
 Route::post('/new', 'TaskController@create');
 Route::post('/regist', 'TaskController@update');
 Route::post('/update', 'TaskController@update');
+Route::post('/update', 'TaskController@update');
 Route::post('/updtask/{id}', 'TaskController@updtask');
 Route::post('/remove/{id}', 'TaskController@remove');
 
