@@ -3,6 +3,7 @@
     <title>TODOリスト</title>
     <head>
         <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/js/tasks.css">
         <script src="/bower_components/jquery/dist/jquery.min.js"></script>
         <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="/js/jquery-tmpl/jquery.tmpl.min.js"></script>
@@ -26,7 +27,6 @@
 
         <script type="text/javascript">
         <!--
-
         $(document).ready(function(){
             reload_todolist()
 
@@ -140,11 +140,21 @@
             });
             function reload_todolist (){
                 $.get("/tasklist", function(items){
+                   loading_on()
                    // JSON形式のデータをtmplに渡す
                    var data = items;
                    $("#todoitems").empty();
                    $("#template_todoitem").tmpl(data).appendTo("#todoitems");
+                   loading_off()
                 });
+            }
+            function loading_on(){
+                $("#todolist_body").fadeOut();
+                $("#loading").fadeIn();
+            }
+            function loading_off(){
+                $("#loading").fadeOut();
+                $("#todolist_body").fadeIn();
             }
         });
 
@@ -154,8 +164,8 @@
     </head>
 
     <body>
-        <p id="test"></p>
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <div id="todolist_body">
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="container-header">
@@ -200,6 +210,10 @@
             </div>
 
         </div>
+    </div>
+    <!-- ローディング画面 -->
+    <div id="loading"><img src="./gif-load.gif"></div>
+
     </body>
 </html>
 
