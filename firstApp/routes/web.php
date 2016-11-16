@@ -24,7 +24,15 @@ Route::get('/info', function () {
     return phpinfo();
 });
 
-Route::get('/test', 'TaskController@test');
+use \App\Task;
+
+Route::get('/test', function(){
+    $showdata = "";
+    //$tasks = \App\Task::where('id', 1)->get();
+    $tasks = \App\Task::find(1);
+
+    return Response::JSON($tasks);
+});
 
 Route::get('/foo/{user}', function ($username) {
     return $username;

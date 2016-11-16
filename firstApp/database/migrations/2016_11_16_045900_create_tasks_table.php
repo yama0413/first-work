@@ -13,15 +13,16 @@ class CreateTasksTable extends Migration
      */
     public function up()
     {
-        //
-        Schema::create('tasks', function(Blueprint $table)
-        {
+        Schema::create('tasks', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title', 128 );
-            $table->string('message');
+            $table->string('title', 128);
+            $table->string('message', 512)->nullable();
             $table->integer('state');
-            $table->time('deadline_date');
-            $table->time('done_date');
+            $table->datetime('scheduling_date')->nullable();
+            $table->timestamps();
+        });
+        Schema::table('tasks', function (Blueprint $table) {
+            $table->softDeletes();
         });
     }
 
@@ -32,7 +33,6 @@ class CreateTasksTable extends Migration
      */
     public function down()
     {
-        //
-        Schema::drop('tasks');
+        Schema::dropIfExists('tasks');
     }
 }
