@@ -10,7 +10,7 @@
         <script id="template_todoitem" type="text/x-query-tmpl">
             <div class="panel panel-success">
                 <div class="panel-heading">
-                    <div class="checkbox"><label><input name="state" type="checkbox" class="check_${id}">達成</label></div>
+                    <div class="checkbox"><label><input name="state" type="checkbox" class="check_${id}" @{{if state==1}}checked="checked"@{{else}}false@{{/if}}>達成</label></div>
                     <button id="btnupd_${id}" name="update" type="button" class="btn btnupd btn-default navbar-btn">更新</button>
                     <button id="btndel_${id}" name="delete" type="button" class="btn btndel btn-default navbar-btn">削除</button>
                      ${title}
@@ -26,7 +26,9 @@
 
         <script type="text/javascript">
         <!--
+
         $(document).ready(function(){
+            reload_todolist()
 
             var taskName = $("#modal_taskname").val()
             var message = $("#modal_message").val()
@@ -48,14 +50,9 @@
                          "message" :$("#modal_message").val()
                      },
                      success:function(data){
-                         // NOTE: POST -> GET
-                         $("#todoitems").empty()
-                         $.get("/tasklist", function(items){
-                            // JSON形式のデータをtmplに渡す
-                            var data = items;
-                            $("#template_todoitem").tmpl(data).appendTo("#todoitems");
-                            $("#myModal").modal("hide")
-                         });
+                        // NOTE: POST -> GET
+                        reload_todolist()
+                        $("#myModal").modal("hide")
                      },
                      error:function(XMLHttpRequest, textStatus, errorThrown){
                          alert("Error:" + textStatus);
@@ -88,14 +85,8 @@
                         $(this).prop("disabled",true);
                     },
                     success:function(data){
-                         // NOTE: POST -> GET
-                         $("#todoitems").empty()
-                         $.get("/tasklist", function(items){
-                            // JSON形式のデータをtmplに渡す
-                            var data = items;
-                            $("#template_todoitem").tmpl(data).appendTo("#todoitems");
-                            $("#myModal").modal("hide")
-                         });
+                        // NOTE: POST -> GET
+                        reload_todolist()
                     },
                     error:function(XMLHttpRequest, textStatus, errorThrown){
                         alert("Error:" + textStatus);
@@ -123,15 +114,7 @@
                         $(this).prop("disabled",true);
                     },
                     success:function(data){
-                         // NOTE: POST -> GET
-                         $("#todoitems").empty()
-                         $.get("/tasklist", function(items){
-                            // JSON形式のデータをtmplに渡す
-                            var data = items;
-                            $("#template_todoitem").tmpl(data).appendTo("#todoitems");
-                            $("#myModal").modal("hide")
-                         });
-
+                        reload_todolist()
                     },
                     error:function(XMLHttpRequest, textStatus, errorThrown){
                         alert("Error:" + textStatus);
@@ -155,9 +138,16 @@
             $(window).on("beforeunload", function(e){
                 ;
             });
-
-
+            function reload_todolist (){
+                $.get("/tasklist", function(items){
+                   // JSON形式のデータをtmplに渡す
+                   var data = items;
+                   $("#todoitems").empty();
+                   $("#template_todoitem").tmpl(data).appendTo("#todoitems");
+                });
+            }
         });
+
         //-->
         </script>
         <title>TODOリスト</title>
@@ -179,34 +169,7 @@
         <div id="todo_container" class="container">
             <h4>TODOリスト一覧</h4>
             <div id="todoitems">
-            @foreach($users as $user)
-            <div class="panel panel-success">
-                <div class="panel-heading">
-                    @if($user->state === 1)
-                    <div class="checkbox"><label><input name="state" type="checkbox" class="check_{{$user->id}}" checked="checked">達成</label></div>
-                    @else
-                    <div class="checkbox"><label><input name="state" type="checkbox" class="check_{{$user->id}}">達成</label></div>
-                    @endif
-                    <button id="btnupd_{{$user->id}}" name="update" type="button" class="btn btnupd btn-default navbar-btn">更新</button>
-                    <button id="btndel_{{$user->id}}" name="delete" type="button" class="btn btndel btn-default navbar-btn">削除</button>
-                    {{ $user->title }}
-                </div>
-                <div class="panel-body">
-                    <div class="msgform">
-                        <textarea name="message" id="textarea_{{$user->id}}" class="textarea form-control" rows="4">{{ $user->message }}</textarea>
-                    </div>
-                </div>
-<!--        
-                <div class="panel-footer">
-                    登録日：{{ $user->done_date }}<br />
-                    締切日：{{ $user->deadline_date }}<br />
-                </div>
---!>        
-            </div>
-            @endforeach
             </div> <!-- end todoitems-->
-
-
  
             <!-- モーダルウィンドウの中身 -->
             <div class="modal fade" id="myModal">
