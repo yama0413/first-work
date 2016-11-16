@@ -12,7 +12,7 @@
 */
 
 Route::get('/', 'TaskController@index');
-Route::post('/', 'TaskController@index');
+Route::get('/tasklist', 'TaskController@tasklist');
 Route::post('/new', 'TaskController@create');
 Route::post('/regist', 'TaskController@update');
 Route::post('/update', 'TaskController@update');

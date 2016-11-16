@@ -4,8 +4,25 @@
     <head>
         <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
         <script src="/bower_components/jquery/dist/jquery.min.js"></script>
-        <!--<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>-->
-        <script src="/js/app.js"></script>
+        <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="/js/jquery-tmpl/jquery.tmpl.min.js"></script>
+
+        <script id="template_todoitem" type="text/x-query-tmpl">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <div class="checkbox"><label><input name="state" type="checkbox" class="check_${id}">達成</label></div>
+                    <button id="btnupd_${id}" name="update" type="button" class="btn btnupd btn-default navbar-btn">更新</button>
+                    <button id="btndel_${id}" name="delete" type="button" class="btn btndel btn-default navbar-btn">削除</button>
+                     ${title}
+                </div>
+                <div class="panel-body">
+                    <div class="msgform">
+                        <textarea name="message" id="textarea_${id}" class="textarea form-control" rows="4">${message}</textarea>
+                    </div>
+                </div>
+            </div>
+            <input id="token2" type="hidden" name="_token" value="{{ csrf_token() }}">
+        </script>
 
         <script type="text/javascript">
         <!--
@@ -14,7 +31,10 @@
             var taskName = $("#modal_taskname").val()
             var message = $("#modal_message").val()
 
-            $("#modal_newbutton").click(function(){
+            $("body").on("click", "#modal_newbutton", function(event){
+                event.preventDefault();
+                console.log("new click");
+
                  $.ajaxSetup({
                      headers: {
                          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -28,13 +48,13 @@
                          "message" :$("#modal_message").val()
                      },
                      success:function(data){
-                         alert("タスク登録が完了しました");
-                         $("#myModal").modal("hide")
-                 
-                         // NOTE: POST -> GET という処理なので
-                         // ユーザー体験が損なわれるとWarningが出る。
-                         $.get("/", function(render){
-                             $("body").html(render);
+                         // NOTE: POST -> GET
+                         $("#todoitems").empty()
+                         $.get("/tasklist", function(items){
+                            // JSON形式のデータをtmplに渡す
+                            var data = items;
+                            $("#template_todoitem").tmpl(data).appendTo("#todoitems");
+                            $("#myModal").modal("hide")
                          });
                      },
                      error:function(XMLHttpRequest, textStatus, errorThrown){
@@ -47,16 +67,8 @@
                  });
             });
 
-            /*
-            $(".checkbox").change(function(e){
-                console.log($('input', this).val());
-                var id = $('input',this).val().slice(6);
 
-                // TODO: ajax通信で達成・未達成情報を更新する
-            });
-            */
-
-            $(".btnupd").click(function(e){
+            $("body").on("click", ".btnupd", function(e){
                 var id = e.target.id.slice(7)
                 $(this).prop("disabled",true);
 
@@ -65,8 +77,6 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
                 });
-
-
                 $.ajax({
                     url: "/updtask/" + id,
                     type: "POST",
@@ -78,10 +88,14 @@
                         $(this).prop("disabled",true);
                     },
                     success:function(data){
-                        // NOTE: POST -> GET という処理なのでユーザー体験が損なわれるとWarningが出る。
-                        $.get("/", function(render){
-                            $("body").html(render);
-                        });
+                         // NOTE: POST -> GET
+                         $("#todoitems").empty()
+                         $.get("/tasklist", function(items){
+                            // JSON形式のデータをtmplに渡す
+                            var data = items;
+                            $("#template_todoitem").tmpl(data).appendTo("#todoitems");
+                            $("#myModal").modal("hide")
+                         });
                     },
                     error:function(XMLHttpRequest, textStatus, errorThrown){
                         alert("Error:" + textStatus);
@@ -91,12 +105,7 @@
                     },
                 });
             });
-
-
-
-
-
-            $(".btndel").click(function(e){
+            $("body").on("click", ".btndel", function(e){
                 var id = e.target.id.slice(7)
                 $(this).prop("disabled",true);
 
@@ -114,10 +123,15 @@
                         $(this).prop("disabled",true);
                     },
                     success:function(data){
-                        // NOTE: POST -> GET という処理なのでユーザー体験が損なわれるとWarningが出る。
-                        $.get("/", function(render){
-                            $("body").html(render);
-                        });
+                         // NOTE: POST -> GET
+                         $("#todoitems").empty()
+                         $.get("/tasklist", function(items){
+                            // JSON形式のデータをtmplに渡す
+                            var data = items;
+                            $("#template_todoitem").tmpl(data).appendTo("#todoitems");
+                            $("#myModal").modal("hide")
+                         });
+
                     },
                     error:function(XMLHttpRequest, textStatus, errorThrown){
                         alert("Error:" + textStatus);
@@ -150,6 +164,7 @@
     </head>
 
     <body>
+        <p id="test"></p>
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <nav class="navbar navbar-default">
             <div class="container-fluid">
@@ -163,34 +178,33 @@
 
         <div id="todo_container" class="container">
             <h4>TODOリスト一覧</h4>
+            <div id="todoitems">
             @foreach($users as $user)
-            <form action="/updtask/{{$user->id}}" method="post">
-                <div class="panel panel-success">
-                    <div class="panel-heading">
-                        @if($user->state === 1)
-                        <div class="checkbox"><label><input name="state" type="checkbox" class="check_{{$user->id}}" checked="checked">達成</label></div>
-                        @else
-                        <div class="checkbox"><label><input name="state" type="checkbox" class="check_{{$user->id}}">達成</label></div>
-                        @endif
-                        <button id="btnupd_{{$user->id}}" name="update" type="button" class="btn btnupd btn-default navbar-btn">更新</button>
-                        <button id="btndel_{{$user->id}}" name="delete" type="button" class="btn btndel btn-default navbar-btn">削除</button>
-                        {{ $user->title }}
-                    </div>
-                    <div class="panel-body">
-                        <div class="msgform">
-                            <textarea name="message" id="textarea_{{$user->id}}" class="textarea form-control" rows="4">{{ $user->message }}</textarea>
-                        </div>
-                    </div>
-<!--            
-                    <div class="panel-footer">
-                        登録日：{{ $user->done_date }}<br />
-                        締切日：{{ $user->deadline_date }}<br />
-                    </div>
---!>            
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    @if($user->state === 1)
+                    <div class="checkbox"><label><input name="state" type="checkbox" class="check_{{$user->id}}" checked="checked">達成</label></div>
+                    @else
+                    <div class="checkbox"><label><input name="state" type="checkbox" class="check_{{$user->id}}">達成</label></div>
+                    @endif
+                    <button id="btnupd_{{$user->id}}" name="update" type="button" class="btn btnupd btn-default navbar-btn">更新</button>
+                    <button id="btndel_{{$user->id}}" name="delete" type="button" class="btn btndel btn-default navbar-btn">削除</button>
+                    {{ $user->title }}
                 </div>
-                <input id="token2" type="hidden" name="_token" value="{{ csrf_token() }}">
-            </form>
+                <div class="panel-body">
+                    <div class="msgform">
+                        <textarea name="message" id="textarea_{{$user->id}}" class="textarea form-control" rows="4">{{ $user->message }}</textarea>
+                    </div>
+                </div>
+<!--        
+                <div class="panel-footer">
+                    登録日：{{ $user->done_date }}<br />
+                    締切日：{{ $user->deadline_date }}<br />
+                </div>
+--!>        
+            </div>
             @endforeach
+            </div> <!-- end todoitems-->
 
 
  

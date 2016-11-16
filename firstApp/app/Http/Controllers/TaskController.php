@@ -19,6 +19,13 @@ class TaskController extends Controller
         return view('tasks', ['users' => $users]);
     }
 
+    public function tasklist(Request $request)
+    {
+        Log::debug("tasklist function @ TaskController.php");
+        $users = DB::table('mydb.tasks')->get();
+        return Response::json($users);
+    }
+
     public function create(Request $request)
     {
         DB::table('mydb.tasks')->insert([
@@ -30,7 +37,7 @@ class TaskController extends Controller
             'done_date' => new DateTime(),
         ]]);
 
-        return redirect('/');
+        return 0;
     }
 
 
