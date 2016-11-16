@@ -36,6 +36,7 @@
             $("body").on("click", "#modal_newbutton", function(event){
                 event.preventDefault();
                 console.log("new click");
+                loading_on()
 
                  $.ajaxSetup({
                      headers: {
@@ -55,7 +56,8 @@
                         $("#myModal").modal("hide")
                      },
                      error:function(XMLHttpRequest, textStatus, errorThrown){
-                         alert("Error:" + textStatus);
+                        alert("Error:" + textStatus);
+                        loading_off()
                      },
                      complete:function(){
                          $("#modal_taskname").val("");
@@ -68,6 +70,7 @@
             $("body").on("click", ".btnupd", function(e){
                 var id = e.target.id.slice(7)
                 $(this).prop("disabled",true);
+                loading_on()
 
                 $.ajaxSetup({
                     headers: {
@@ -90,6 +93,7 @@
                     },
                     error:function(XMLHttpRequest, textStatus, errorThrown){
                         alert("Error:" + textStatus);
+                        loading_off()
                     },
                     complete:function(){
                         $(this).prop("disabled",false);
@@ -99,6 +103,7 @@
             $("body").on("click", ".btndel", function(e){
                 var id = e.target.id.slice(7)
                 $(this).prop("disabled",true);
+                loading_on()
 
                 $.ajaxSetup({
                     headers: {
@@ -118,6 +123,7 @@
                     },
                     error:function(XMLHttpRequest, textStatus, errorThrown){
                         alert("Error:" + textStatus);
+                        loading_off()
                     },
                     complete:function(){
                     },
@@ -140,7 +146,6 @@
             });
             function reload_todolist (){
                 $.get("/tasklist", function(items){
-                   loading_on()
                    // JSON形式のデータをtmplに渡す
                    var data = items;
                    $("#todoitems").empty();
