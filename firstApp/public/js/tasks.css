@@ -1,6 +1,11 @@
 #todolist_body{
     display:none;
 }
+
+.panel-body{
+    display:none;
+}
+
 #loading{
     position:absolute;
     left:50%;

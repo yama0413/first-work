@@ -4,9 +4,12 @@
     <head>
         <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="/js/tasks.css">
+        <link rel="stylesheet" href="/js/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css">
         <script src="/bower_components/jquery/dist/jquery.min.js"></script>
         <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="/js/jquery-tmpl/jquery.tmpl.min.js"></script>
+        <script src="/js/moment/moment.js"></script>
+        <script src="/js/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
 
         <script id="template_todoitem" type="text/x-query-tmpl">
             <div class="panel panel-success">
@@ -14,7 +17,9 @@
                     <div class="checkbox"><label><input name="state" type="checkbox" class="check_${id}" @{{if state==1}}checked="checked"@{{else}}false@{{/if}}>達成</label></div>
                     <button id="btnupd_${id}" name="update" type="button" class="btn btnupd btn-default navbar-btn">更新</button>
                     <button id="btndel_${id}" name="delete" type="button" class="btn btndel btn-default navbar-btn">削除</button>
-                     ${title}
+                    ${title}
+                    ${scheduling_date}
+                    <button id="btn_detail_${id}" name="detail" type="button" class="btn btndetail btn-default navbar-btn">詳細</button>
                 </div>
                 <div class="panel-body">
                     <div class="msgform">
@@ -32,10 +37,17 @@
 
             var taskName = $("#modal_taskname").val()
             var message = $("#modal_message").val()
+            var scheduling_date = $("#modal_scheduling_date").val()
+
+            // 新規ボタン押下時にモーダルフォームの内容をクリア
+            $("#newbutton").on("click", function(){
+                $("#modal_taskname").val("");
+                $("#modal_message").val("");
+                $("#modal_scheduling_date").val("");
+            });
 
             $("body").on("click", "#modal_newbutton", function(event){
                 event.preventDefault();
-                console.log("new click");
                 loading_on()
 
                  $.ajaxSetup({
@@ -48,7 +60,8 @@
                      type: "POST",
                      data: {
                          "taskname":$("#modal_taskname").val(),
-                         "message" :$("#modal_message").val()
+                         "message" :$("#modal_message").val(),
+                         "scheduling_date" : $("#modal_scheduling_date").val()
                      },
                      success:function(data){
                         // NOTE: POST -> GET
@@ -60,15 +73,13 @@
                         loading_off()
                      },
                      complete:function(){
-                         $("#modal_taskname").val("");
-                         $("#modal_message").val("");
                      },
                  });
             });
 
 
             $("body").on("click", ".btnupd", function(e){
-                var id = e.target.id.slice(7)
+                var id = $(this).attr("id").slice(7)
                 $(this).prop("disabled",true);
                 loading_on()
 
@@ -100,8 +111,21 @@
                     },
                 });
             });
+
+            $("body").on("click", ".btndetail", function(){
+                var detail_info = $(this).parent().siblings(".panel-body");
+
+                if((detail_info).is(":hidden")){
+                    detail_info.slideDown();
+                }else{
+                    detail_info.slideUp();
+                }
+            });
+
+
+
             $("body").on("click", ".btndel", function(e){
-                var id = e.target.id.slice(7)
+                var id = $(this).attr("id").slice(7)
                 $(this).prop("disabled",true);
                 loading_on()
 
@@ -130,15 +154,9 @@
                 });
             });
 
-
-            /*
-            $(".msgform").keyup(function(e){
-                alert($("textarea",this).val());
-                alert(e.key);
+            $(function (){
+                $('#modal_scheduling_date').datetimepicker();
             });
-            */
-
-
 
             // ウィンドウを閉じる際に処理を行う
             $(window).on("beforeunload", function(e){
@@ -192,16 +210,19 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h2 class="modal-title">新規作成</h2>
-                                <hr />
-                                <div class="form-group">
-                                    <label>タスク名</label>
-                                    <input id="modal_taskname" type="text" name="title" class="form-control">
-                                </div>
-                            </div>
-                            <div class="modal-body">
+                            <h2 class="modal-title">新規作成</h2>
+                        </div>
+                        <div class="modal-body">
                             <div class="form-group">
-                            <label>本文</label>
+                                <label>タスク名</label>
+                                <input id="modal_taskname" type="text" name="title" class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>締切日</label>
+                                <input "display" id="modal_scheduling_date" type="text" class="form-control">
+                                <p></p>
+                                <label>本文</label>
                                 <textarea id="modal_message" rows=8 cols=40  class="form-control"></textarea>
                             </div>
                         </div>
