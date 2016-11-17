@@ -14,7 +14,7 @@
         <script id="template_todoitem" type="text/x-query-tmpl">
             <div class="panel panel-success">
                 <div class="panel-heading">
-                    <div class="checkbox"><label><input name="state" type="checkbox" class="check_${id}" @{{if state==1}}checked="checked"@{{else}}false@{{/if}}>達成</label></div>
+                    <div class="checkbox"><label><input name="state" type="checkbox" class="check_icon check_${id}" @{{if state==1}}checked="checked"@{{else}}false@{{/if}}>達成</label></div>
                     <button id="btnupd_${id}" name="update" type="button" class="btn btnupd btn-default navbar-btn">更新</button>
                     <button id="btndel_${id}" name="delete" type="button" class="btn btndel btn-default navbar-btn">削除</button>
                     ${title}
@@ -33,7 +33,7 @@
         <script type="text/javascript">
         <!--
         $(document).ready(function(){
-            reload_todolist()
+            reload_todolist();
 
             var taskName = $("#modal_taskname").val()
             var message = $("#modal_message").val()
@@ -44,6 +44,47 @@
                 $("#modal_taskname").val("");
                 $("#modal_message").val("");
                 $("#modal_scheduling_date").val("");
+            });
+
+            function update_show_achieve(item){
+                if($(item).hasClass("active")){
+                    console.log("active");
+                    // 完了済み項目を表示 = OFF
+                    for(var i=0; i<$(".check_icon").length; i++){
+                        if($(".check_icon:eq(" + i + ")").prop('checked'))
+                        {
+                            $(".check_icon:eq(" + i + ")").parent().parent().parent().parent().addClass("hidden");
+                        }
+                    }
+                    $(item).html("完了済み項目を表示");
+                }else{
+                    console.log("no-active");
+                    // 完了済み項目を表示 = ON
+                    $(".check_icon").parent().parent().parent().parent().removeClass("hidden");
+                    $(item).html("完了済み項目を非表示");
+                }
+            }
+
+            $("#btn_show_achieve").on("click", function(){
+                update_show_achieve(this);
+            });
+
+            $("body").on("click", ".check_icon", function(){
+                if($("#btn_show_achieve").hasClass("active")){
+                    $("#btn_show_achieve").removeClass("active");
+                }
+                else
+                {
+                    $("#btn_show_achieve").addClass("active");
+                }
+                update_show_achieve("#btn_show_achieve");
+                if($("#btn_show_achieve").hasClass("active")){
+                    $("#btn_show_achieve").removeClass("active");
+                }
+                else
+                {
+                    $("#btn_show_achieve").addClass("active");
+                }
             });
 
             $("body").on("click", "#modal_newbutton", function(event){
@@ -179,6 +220,8 @@
                 $("#loading").fadeOut();
                 $("#todolist_body").fadeIn();
             }
+
+            $("#btn_show_achieve").trigger("click");
         });
 
         //-->
@@ -194,6 +237,8 @@
                 <div class="container-header">
                     <button data-toggle="modal" data-target="#myModal" type="button" id="newbutton" class="btn btn-default navbar-btn">
                         新規
+                    </button>
+                    <button id="btn_show_achieve" class="btn btn-default" data-toggle="button">
                     </button>
                 </div>
             </div>

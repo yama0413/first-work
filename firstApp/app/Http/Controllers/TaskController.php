@@ -25,7 +25,7 @@ class TaskController extends Controller
     public function tasklist(Request $request)
     {
         //Log::debug("tasklist function @ TaskController.php");
-        $users = \App\Task::all();
+        $users = \App\Task::orderBy("scheduling_date","asc")->get();
         return Response::json($users);
     }
 

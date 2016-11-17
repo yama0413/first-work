@@ -6,6 +6,10 @@
     display:none;
 }
 
+#btn_show_achieve{
+    width:12em;
+}
+
 #loading{
     position:absolute;
     left:50%;
