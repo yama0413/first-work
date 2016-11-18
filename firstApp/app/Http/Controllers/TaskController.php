@@ -35,7 +35,9 @@ class TaskController extends Controller
         $new_task->title = $request->input('taskname');
         $new_task->message = $request->input('message');
         $new_task->state = 0;
-        $new_task->scheduling_date = new DateTime($request->input('scheduling_date'));
+        if($request->input('scheduling_date') != ""){
+            $new_task->scheduling_date = new DateTime($request->input('scheduling_date'));
+        }
         $new_task->save();
 
         return 0;
