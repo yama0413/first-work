@@ -16,7 +16,7 @@ class TaskController extends Controller
     // トップページを返す
     public function index()
     {
-        //Log::debug("index function @ TaskController.php");
+        Log::debug("index function @ TaskController.php");
         $users = \App\Task::all();
         return view('tasks');
     }

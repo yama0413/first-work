@@ -1,0 +1,39 @@
+.todolist{
+    padding-top:70px;
+}
+.navbar{
+}
+
+.panel-title{
+}
+
+.edit-buttons{
+    text-align:right;
+    padding-top:30px;
+}
+
+.detail-button{
+}
+
+.todoitem{
+    padding-bottom:10px;
+}
+
+.ng-hide{
+    padding-bottom:0px;
+}
+
+.myCheck{
+    width:18px;
+    height:18px;
+    padding-right:50px;
+}
+
+.panel-title{
+    padding-left: 5px;
+    padding-right: 20px;
+}
+
+span.datetime{
+    padding-right: 20px;
+}
